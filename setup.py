@@ -38,6 +38,7 @@ setup(name='joerd',
           'geographiclib',
           'boto3',
           'contextlib2',
+          'future'
       ],
       test_suite='tests',
       tests_require=[

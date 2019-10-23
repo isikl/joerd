@@ -26,3 +26,7 @@ normal_tiles/
 
 # macOS sillyness
 .DS_Store
+
+# editor stuff
+.idea
+venv/
