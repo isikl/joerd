@@ -1,3 +1,4 @@
+from builtins import object
 import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
@@ -103,7 +104,7 @@ class S3Store(object):
                                    ExtraArgs=extra_args)
                 break
 
-            except StandardError as e:
+            except Exception as e:
                 try_num += 1
                 logger.warning("Try %d of %d: Failed to upload %s due to: %s" \
                                % (try_num, tries, s3_key,

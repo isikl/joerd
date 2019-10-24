@@ -1,3 +1,4 @@
+from builtins import object
 class Batch(object):
     """
     A fake batch, which batches nothing and just sends messages on the

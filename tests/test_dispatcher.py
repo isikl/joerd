@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 import unittest
 import joerd.output.terrarium as terrarium
 from joerd.region import Region
@@ -117,10 +119,10 @@ class TestDispatcher(unittest.TestCase):
 
         class FakeLogger(object):
             def info(self, msg):
-                print msg
+                print(msg)
 
             def warning(self, msg):
-                print msg
+                print(msg)
 
         logger = FakeLogger()
         queue = Queue()

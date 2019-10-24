@@ -1,7 +1,9 @@
+from future import standard_library
+standard_library.install_aliases()
 import pyqtree
 import yaml
 import logging
-import thread
+import _thread
 
 
 # Create an index given a YAML file consisting of a list of strings and a

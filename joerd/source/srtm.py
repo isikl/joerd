@@ -1,3 +1,6 @@
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 from bs4 import BeautifulSoup
 from joerd.util import BoundingBox
 import joerd.download as download
@@ -220,7 +223,7 @@ class SRTM(object):
         # if the tile scale is greater than 20x the SRTM scale, then there's no
         # point in including SRTM, it'll be far too fine to make a difference.
         # SRTM is 1 arc second.
-        if tile.max_resolution() > 20 * 1.0 / 3600:
+        if tile.max_resolution() > old_div(20 * 1.0, 3600):
             return tiles
 
         # buffer by 0.01 degrees (36px) to grab neighbouring tiles and ensure

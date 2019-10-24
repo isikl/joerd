@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from joerd.util import BoundingBox
 from joerd.region import RegionTile
 from joerd.mkdir_p import mkdir_p
@@ -149,9 +154,9 @@ class NormalTile(mercator.MercatorTile):
         # NOTE: at low zooms, taking the width across the tile starts to break
         # down, so we take the width across a small portion of the interior of
         # the tile instead.
-        geodesic_res_x = -1.0 / \
+        geodesic_res_x = old_div(-1.0, \
                          geod.Inverse(ll_mid_y, ll_mid_x - ll_spc_x,
-                                      ll_mid_y, ll_mid_x + ll_spc_x)['s12']
+                                      ll_mid_y, ll_mid_x + ll_spc_x)['s12'])
         geodesic_res_y = 1.0 / \
                          geod.Inverse(ll_mid_y - ll_spc_y, ll_mid_x,
                                       ll_mid_y + ll_spc_y, ll_mid_x)['s12']
@@ -176,7 +181,7 @@ class NormalTile(mercator.MercatorTile):
         # dividing the img by norm_copy should give us RGB components with
         # values between -1 and 1, but we need values between 0 and 255 for
         # PNG channels. so we move and scale the values to fit in that range.
-        scaled = (128.0 * (img / norm_copy + 1.0))
+        scaled = (128.0 * (old_div(img, norm_copy) + 1.0))
 
         # and finally clip it to (0, 255) just in case
         img = numpy.clip(scaled, 0.0, 255.0)
@@ -225,7 +230,7 @@ class NormalTile(mercator.MercatorTile):
                     % (tile, ", ".join(source_names)))
 
 
-class Normal:
+class Normal(object):
 
     def __init__(self, regions, sources, options={}):
         self.regions = regions

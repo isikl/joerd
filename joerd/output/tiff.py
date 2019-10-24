@@ -1,3 +1,6 @@
+from builtins import str
+from builtins import range
+from builtins import object
 from joerd.util import BoundingBox
 from joerd.region import RegionTile
 from joerd.mkdir_p import mkdir_p
@@ -83,7 +86,7 @@ class TiffTile(mercator.MercatorTile):
                     % (tile, ", ".join(source_names)))
 
 
-class Tiff:
+class Tiff(object):
 
     def __init__(self, regions, sources, options={}):
         self.regions = regions

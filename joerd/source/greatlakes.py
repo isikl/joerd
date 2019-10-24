@@ -1,3 +1,6 @@
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 from joerd.util import BoundingBox
 import joerd.download as download
 import joerd.check as check
@@ -136,14 +139,14 @@ class GreatLakes(object):
         # if the tile scale is greater than 20x the original scale, then
         # there's no point in including it, as it'll be far too fine to make
         # a difference. Great Lakes data is 3 arc seconds.
-        if tile.max_resolution() > 20 * 3.0 / 3600:
+        if tile.max_resolution() > old_div(20 * 3.0, 3600):
             return tiles
 
         # buffer by 0.1 degrees (48px) to grab neighbouring tiles to ensure
         # that there's no tile edge artefacts.
         tile_bbox = tile.latlon_bbox().buffer(0.1)
 
-        for lake, info in GREAT_LAKES.items():
+        for lake, info in list(GREAT_LAKES.items()):
             if tile_bbox.intersects(info['bbox']):
                 tiles.add(GreatLake(self, lake))
 

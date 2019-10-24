@@ -1,8 +1,13 @@
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
+from builtins import object
 import unittest
 import joerd.download as download
 try:
     # Python 2.x
-    import BaseHTTPServer as http
+    import http.server as http
 except ImportError:
     # Python 3.x
     from http import server as http
@@ -80,7 +85,7 @@ class _DroppingHandler(http.BaseHTTPRequestHandler):
             self.wfile.write(self.value[byte_range[0]:byte_range[1]+1])
 
 
-class _MaxLenFunc:
+class _MaxLenFunc(object):
     def __init__(self, init_len, incr_len):
         self.length = init_len
         self.incr = incr_len
@@ -104,7 +109,7 @@ class TestDownload(unittest.TestCase):
 
     def test_download_simple(self):
         # Test that the download function can download a file over HTTP.
-        value = "Some random string here."
+        value = b"Some random string here."
 
         def _handler(*args):
             return _SimpleHandler(value, *args)
@@ -120,7 +125,7 @@ class TestDownload(unittest.TestCase):
     def test_download_restart(self):
         # Test that the download function can handle restarting, and fetching
         # a file as a series of smaller byte ranges.
-        value = "Some random string here."
+        value = b"Some random string here."
 
         # The server will only return 4-byte chunks, but it should be possible
         # to download the whole file eventually.
@@ -135,13 +140,13 @@ class TestDownload(unittest.TestCase):
 
         with _test_http_server(_handler) as server:
             with download.get(server.url('/'), dict(
-                    verifier=_verifier, tries=(len(value) / 4 + 1))) as data:
+                    verifier=_verifier, tries=(old_div(len(value), 4) + 1))) as data:
                 self.assertEqual(value, data.read())
 
     def test_download_restart_from_scratch(self):
         # Test that the download function can handle restarting from scratch
         # if the server doesn't support byte range requests.
-        value = "Some random string here."
+        value = b"Some random string here."
 
         # The server initially doesn't give the whole file, but eventually
         # will.
@@ -156,7 +161,7 @@ class TestDownload(unittest.TestCase):
 
         with _test_http_server(_handler) as server:
             with download.get(server.url('/'), dict(
-                    verifier=_verifier, tries=(len(value) / 4 + 1))) as data:
+                    verifier=_verifier, tries=(old_div(len(value), 4) + 1))) as data:
                 self.assertEqual(value, data.read())
 
     def test_download_limited_retries(self):
@@ -164,7 +169,7 @@ class TestDownload(unittest.TestCase):
         # possible to download the file (or would take an inordinate amount of
         # time), the download process should cap the maximum number of tries
         # to a finite value.
-        value = "Some random string here."
+        value = b"Some random string here."
 
         # The server just gives back the same 4 bytes over and over.
         max_len = _MaxLenFunc(4, 0)

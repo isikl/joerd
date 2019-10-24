@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from joerd.util import BoundingBox
 import joerd.composite as composite
 from contextlib2 import contextmanager
@@ -41,10 +45,10 @@ def _tx_bbox(tx, bbox, expand=0.0):
 def _merc_bbox(z, x, y):
     extent = float(1 << z)
     return BoundingBox(
-        MERCATOR_WORLD_SIZE * (x / extent - 0.5),
-        MERCATOR_WORLD_SIZE * (0.5 - (y + 1) / extent),
-        MERCATOR_WORLD_SIZE * ((x + 1) / extent - 0.5),
-        MERCATOR_WORLD_SIZE * (0.5 - y / extent))
+        MERCATOR_WORLD_SIZE * (old_div(x, extent) - 0.5),
+        MERCATOR_WORLD_SIZE * (0.5 - old_div((y + 1), extent)),
+        MERCATOR_WORLD_SIZE * (old_div((x + 1), extent) - 0.5),
+        MERCATOR_WORLD_SIZE * (0.5 - old_div(y, extent)))
 
 
 class MercatorTile(object):
@@ -64,8 +68,8 @@ class MercatorTile(object):
 
     def max_resolution(self):
         bbox = self.latlon_bbox().bounds
-        return max((bbox[2] - bbox[0]) / self.size,
-                   (bbox[3] - bbox[1]) / self.size)
+        return max(old_div((bbox[2] - bbox[0]), self.size),
+                   old_div((bbox[3] - bbox[1]), self.size))
 
     def tile_name(self):
         return _tile_name(self.z, self.x, self.y)
@@ -148,8 +152,8 @@ class Mercator(object):
         x, y, z = self.tx_inv.TransformPoint(float(lon), float(lat))
 
         extent = 1 << zoom
-        tx = int(math.floor(extent * ((x / MERCATOR_WORLD_SIZE) + 0.5)))
-        ty = int(math.floor(extent * (0.5 - (y / MERCATOR_WORLD_SIZE))))
+        tx = int(math.floor(extent * ((old_div(x, MERCATOR_WORLD_SIZE)) + 0.5)))
+        ty = int(math.floor(extent * (0.5 - (old_div(y, MERCATOR_WORLD_SIZE)))))
 
         # and clip the result to lie in the allowable domain 0 <= coord < extent
         tx = min(max(0, tx), extent - 1)

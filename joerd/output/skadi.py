@@ -1,3 +1,5 @@
+from builtins import range
+from builtins import object
 from joerd.util import BoundingBox
 from joerd.region import RegionTile
 from tempfile import NamedTemporaryFile as Tmp
@@ -133,7 +135,7 @@ class SkadiTile(object):
         logger.info("Done generating tile %r" % tile)
 
 
-class Skadi:
+class Skadi(object):
 
     def __init__(self, regions, sources, options={}):
         self.regions = regions

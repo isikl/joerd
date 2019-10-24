@@ -1,3 +1,4 @@
+from builtins import object
 from joerd.util import BoundingBox
 
 class Region(object):

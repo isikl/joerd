@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import division
+from builtins import map
+from builtins import range
+from past.utils import old_div
 from osgeo import ogr
 from yaml import load, dump
 from copy import deepcopy
@@ -63,7 +68,7 @@ def parse_bbox(value):
     bbox = value.split(',')
     if len(bbox) != 4:
         raise argparse.ArgumentError
-    return map(float, bbox)
+    return list(map(float, bbox))
 
 
 if __name__ == '__main__':
@@ -101,14 +106,14 @@ if __name__ == '__main__':
     sub_block_size = args['sub_block_size']
 
     bbox = args['bbox']
-    bbox[0] = stride * int(math.floor(bbox[0] / stride))
-    bbox[1] = stride * int(math.floor(bbox[1] / stride))
-    bbox[2] = stride * int(math.ceil(bbox[2] / stride))
-    bbox[3] = stride * int(math.ceil(bbox[3] / stride))
+    bbox[0] = stride * int(math.floor(old_div(bbox[0], stride)))
+    bbox[1] = stride * int(math.floor(old_div(bbox[1], stride)))
+    bbox[2] = stride * int(math.ceil(old_div(bbox[2], stride)))
+    bbox[3] = stride * int(math.ceil(old_div(bbox[3], stride)))
 
     conf = load(open(args['input-file']))
 
-    print "Loading shapefiles..."
+    print("Loading shapefiles...")
     objs = []
     for shapefile in args['shape-file']:
         objs.extend(ogrWkt2Shapely(shapefile))
@@ -116,7 +121,7 @@ if __name__ == '__main__':
     if args['global_mask']:
         objs.append(box(*bbox))
 
-    print "Building index..."
+    print("Building index...")
     index = pyqtree.Index(bbox=[-180,-90,180,90])
     for o in objs:
         index.insert(item=o, bbox=o.bounds)
@@ -134,11 +139,11 @@ if __name__ == '__main__':
                 top=90),
             zoom_range=[0,8]))
 
-    print "Intersecting inside bbox %r..." % bbox
+    print("Intersecting inside bbox %r..." % bbox)
     for x in range(bbox[0], bbox[2], stride):
         if total > 0:
-            print "   >> x = %d (%d/%d = %.1f%%)" \
-                % (x, hit, total, (100.0 * hit) / total)
+            print("   >> x = %d (%d/%d = %.1f%%)" \
+                % (x, hit, total, old_div((100.0 * hit), total)))
 
         for y in range(bbox[1], bbox[3], stride):
             bb = [x, y, x + stride, y + stride]
@@ -151,7 +156,7 @@ if __name__ == '__main__':
                     break
             total += 1
 
-    print "Done, writing new config."
+    print("Done, writing new config.")
     with open(args['output-file'], 'w') as fh:
         for r in regions:
             fh.write(json.dumps(r) + "\n")

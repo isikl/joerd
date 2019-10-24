@@ -1,4 +1,5 @@
-class BoundingBox:
+from builtins import object
+class BoundingBox(object):
     def __init__(self, left, bottom, right, top):
         self.bounds = (left, bottom, right, top)
 

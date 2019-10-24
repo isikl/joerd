@@ -1,4 +1,6 @@
-from ned_base import NEDBase
+from __future__ import absolute_import
+from builtins import object
+from .ned_base import NEDBase
 import re
 import os.path
 

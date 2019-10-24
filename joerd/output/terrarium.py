@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from joerd.util import BoundingBox
 from joerd.region import RegionTile
 from joerd.mkdir_p import mkdir_p
@@ -65,7 +70,7 @@ class TerrariumTile(mercator.MercatorTile):
             pixels += 32768.0
             numpy.clip(pixels, 0.0, 65535.0, out=pixels)
 
-            r = (pixels / 256).astype(numpy.uint8)
+            r = (old_div(pixels, 256)).astype(numpy.uint8)
             res = mem_ds.GetRasterBand(1).WriteArray(r)
             assert res == gdal.CPLE_None
 
@@ -95,7 +100,7 @@ class TerrariumTile(mercator.MercatorTile):
                     % (tile, ", ".join(source_names)))
 
 
-class Terrarium:
+class Terrarium(object):
 
     def __init__(self, regions, sources, options={}):
         self.regions = regions

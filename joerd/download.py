@@ -1,10 +1,13 @@
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 from contextlib2 import contextmanager, closing
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import tempfile
 import os
 import logging
 import shutil
-import httplib
+import http.client
 import ftplib
 import socket
 from time import sleep
@@ -75,7 +78,7 @@ def get(url, options={}):
                     backoff(tries - last_successful_try)
                 tries += 1
 
-            req = urllib2.Request(url)
+            req = urllib.request.Request(url)
 
             # if the server supports accept range, and we have a partial
             # download then attemp to resume it.
@@ -94,7 +97,7 @@ def get(url, options={}):
                 tmp.truncate(0)
 
             try:
-                f = urllib2.urlopen(req, timeout=timeout)
+                f = urllib.request.urlopen(req, timeout=timeout)
 
                 # try to get the filesize, if the server reports it.
                 if filesize is None:
@@ -111,7 +114,7 @@ def get(url, options={}):
                 # copy data from the server
                 shutil.copyfileobj(f, tmp)
 
-            except (IOError, httplib.HTTPException) as e:
+            except (IOError, http.client.HTTPException) as e:
                 logger.debug("Got HTTP error: %s" % str(e))
                 continue
 

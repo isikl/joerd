@@ -1,3 +1,4 @@
+from builtins import object
 import traceback
 import json
 import sys
@@ -22,7 +23,7 @@ class Dispatcher(object):
     def append(self, job):
         try:
             self.batch.append(job)
-        except StandardError as e:
+        except Exception as e:
             self.logger.warning("Failed to enqueue batch: %s" \
                                 % "".join(traceback.format_exception(
                                     *sys.exc_info())))
@@ -40,7 +41,7 @@ class Dispatcher(object):
             # batching jobs itself.
             self.queue.flush()
 
-        except StandardError as e:
+        except Exception as e:
             self.logger.warning("Failed to flush batch: %s" \
                                 % "".join(traceback.format_exception(
                                     *sys.exc_info())))
@@ -93,7 +94,7 @@ class JSONSizer(object):
 
 def _freeze(obj):
     if isinstance(obj, dict):
-        frozen_items = [(_freeze(k), _freeze(v)) for (k, v) in obj.items()]
+        frozen_items = [(_freeze(k), _freeze(v)) for (k, v) in list(obj.items())]
         return frozenset(frozen_items)
 
     elif isinstance(obj, list):
@@ -154,7 +155,7 @@ class GroupingDispatcher(object):
             self.dispatcher.append(flushed)
 
     def flush(self):
-        for sources_key, json_sizer in self.batches.iteritems():
+        for sources_key, json_sizer in self.batches.items():
             flushed = json_sizer.flush(_thaw(sources_key))
             self.dispatcher.append(flushed)
 

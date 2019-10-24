@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from past.utils import old_div
 from math import log, tan, pi
 from itertools import product
 from argparse import ArgumentParser
 from os.path import join, splitext
 
-import tempfile, shutil, urllib, io, sys, subprocess
+import tempfile, shutil, urllib.request, urllib.parse, urllib.error, io, sys, subprocess
 import unittest
 
 # four formats are available, let's use GeoTIFF
@@ -18,14 +23,14 @@ def mercator(lat, lon, zoom):
     ''' Convert latitude, longitude to z/x/y tile coordinate at given zoom.
     '''
     # convert to radians
-    x1, y1 = lon * pi/180, lat * pi/180
+    x1, y1 = old_div(lon * pi,180), old_div(lat * pi,180)
 
     # project to mercator
     x2, y2 = x1, log(tan(0.25 * pi + 0.5 * y1))
 
     # transform to tile space
     tiles, diameter = 2 ** zoom, 2 * pi
-    x3, y3 = int(tiles * (x2 + pi) / diameter), int(tiles * (pi - y2) / diameter)
+    x3, y3 = int(old_div(tiles * (x2 + pi), diameter)), int(old_div(tiles * (pi - y2), diameter))
 
     return zoom, x3, y3
 
@@ -41,7 +46,7 @@ def tiles(zoom, lat1, lon1, lat2, lon2):
     _, xmax, ymax = mercator(minlat, maxlon, zoom)
 
     # generate a list of tiles
-    xs, ys = range(xmin, xmax+1), range(ymin, ymax+1)
+    xs, ys = list(range(xmin, xmax+1)), list(range(ymin, ymax+1))
     tiles = [(zoom, x, y) for (y, x) in product(ys, xs)]
 
     return tiles
@@ -58,7 +63,7 @@ def download(output_path, tiles, api_key, verbose=True):
         files = []
 
         for (z, x, y) in tiles:
-            response = urllib.urlopen(tile_url.format(z=z, x=x, y=y, k=api_key))
+            response = urllib.request.urlopen(tile_url.format(z=z, x=x, y=y, k=api_key))
             if response.getcode() != 200:
                 raise RuntimeError('No such tile: {}'.format((z, x, y)))
             if verbose:

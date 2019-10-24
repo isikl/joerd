@@ -1,3 +1,8 @@
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
+from builtins import object
 from joerd.util import BoundingBox
 import joerd.download as download
 import joerd.check as check
@@ -21,7 +26,7 @@ import traceback
 import subprocess
 import glob
 from osgeo import gdal
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import shutil
 import yaml
 import time
@@ -176,7 +181,7 @@ class NED13(object):
         # if the tile scale is greater than 20x the NED scale, then there's no
         # point in including NED, it'll be far too fine to make a difference.
         # NED13 is 1/3rd arc second.
-        if tile.max_resolution() > 20 * 1.0 / (3600 * 3):
+        if tile.max_resolution() > old_div(20 * 1.0, (3600 * 3)):
             return tiles
 
         # buffer by 0.0075 degrees (81px) to grab neighbouring tiles and ensure

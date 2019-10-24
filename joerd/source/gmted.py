@@ -1,3 +1,6 @@
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 from joerd.util import BoundingBox
 import joerd.download as download
 import joerd.check as check
@@ -104,7 +107,7 @@ class GMTED(object):
         # if the tile scale is greater than 20x the GMTED scale, then there's no
         # point in including GMTED, it'll be far too fine to make a difference.
         # GMTED is 7.5 arc seconds at best (30 at the poles).
-        if tile.max_resolution() > 20 * 7.5 / 3600:
+        if tile.max_resolution() > old_div(20 * 7.5, 3600):
             return tiles
 
         # buffer by 0.1 degrees (48px) to grab neighbouring tiles to ensure

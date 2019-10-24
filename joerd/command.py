@@ -1,4 +1,5 @@
-from config import make_config_from_argparse
+from __future__ import absolute_import
+from .config import make_config_from_argparse
 from osgeo import gdal
 from joerd.server import Server
 from joerd.plugin import plugin
@@ -64,7 +65,7 @@ def joerd_server(cfg):
                 for job in jobs:
                     j.dispatch_job(job)
 
-            except StandardError as e:
+            except Exception as e:
                 logger.warning("During processing of job %r, caught "
                                "exception. This job failed, continuing "
                                "to the next. Exception details: %s" %
@@ -102,7 +103,7 @@ def joerd_enqueue_renders(cfg):
     next_idx = 0
 
     logger.info("Starting loop")
-    for output in j.outputs.itervalues():
+    for output in j.outputs.values():
         logger.info("Starting output %r" % output.__class__.__name__)
         for tile in output.generate_tiles():
             if idx >= next_idx:
@@ -172,8 +173,8 @@ def joerd_enqueue_single_renders(cfg):
                 output_name, y, tile_name = location.split("/")
                 pos = output.skadi._parse_tile(tile_name)
                 if pos is None:
-                    raise Exception, "Couldn't parse skadi tile name %r" \
-                        % tile_name
+                    raise Exception("Couldn't parse skadi tile name %r" \
+                        % tile_name)
                 tile = output.skadi.SkadiTile('skadi', *pos)
 
             else:
@@ -190,8 +191,8 @@ def joerd_enqueue_single_renders(cfg):
                     tile = output.terrarium.TerrariumTile(terrarium_output,
                                                           z, x, y)
                 else:
-                    raise Exception, "Couldn't make a tile from line %r" \
-                        % line
+                    raise Exception("Couldn't make a tile from line %r" \
+                        % line)
 
             sources = []
             for name, s in j.sources:

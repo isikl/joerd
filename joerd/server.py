@@ -1,3 +1,4 @@
+from builtins import object
 from joerd.mkdir_p import mkdir_p
 import joerd.tmpdir as tmpdir
 import joerd.download as download
@@ -97,7 +98,7 @@ class MockSource(object):
             return self.src.__getattribute__(method_name)
 
 
-class Server:
+class Server(object):
     """
     Joerd "server" or worker class. It can list the downloads required for a
     configured region or run a job. Jobs can be either downloads of a single
@@ -125,7 +126,7 @@ class Server:
         expanded_regions = list()
         for r in self.regions:
             bbox = r.bbox.bounds
-            for output in self.outputs.itervalues():
+            for output in self.outputs.values():
                 expanded_regions.extend(output.expand_tile(bbox, r.zoom_range))
 
         # the list of expanded regions can now be intersected with each source

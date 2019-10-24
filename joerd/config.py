@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from builtins import object
 from yaml import load
-from util import BoundingBox
+from .util import BoundingBox
 from joerd.region import Region
 import copy
 
@@ -9,7 +11,7 @@ class Configuration(object):
     def __init__(self, yml):
         self.yml = yml
         self.regions = []
-        for name, settings in self._cfg('regions').iteritems():
+        for name, settings in self._cfg('regions').items():
             self.regions.append(self._parse_region(settings))
 
         self.sources = self._cfg('sources')
@@ -76,7 +78,7 @@ def default_yml_config():
 
 
 def merge_cfg(dest, source):
-    for k, v in source.items():
+    for k, v in list(source.items()):
         if isinstance(v, dict):
             subdest = dest.setdefault(k, {})
             merge_cfg(subdest, v)

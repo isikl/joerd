@@ -1,3 +1,4 @@
+from builtins import object
 from joerd.util import BoundingBox
 import joerd.download as download
 import joerd.check as check

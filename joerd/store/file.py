@@ -1,3 +1,4 @@
+from builtins import object
 from distutils.dir_util import copy_tree
 from shutil import copyfile
 from contextlib2 import contextmanager
