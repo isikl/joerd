@@ -16,7 +16,7 @@ def create(index_file, bbox, parse_fn, *parse_args):
     n = 0
 
     with open(index_file, 'r') as f:
-        files = yaml.load(f)
+        files = yaml.load(f, Loader=yaml.FullLoader)
         for f in files:
             t = parse_fn(f, *parse_args)
             if t:

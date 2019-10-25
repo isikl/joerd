@@ -9,6 +9,7 @@ from math import log, tan, pi
 from itertools import product
 from argparse import ArgumentParser
 from os.path import join, splitext
+import mock # To run tests, `pip install mock==2.0.0`
 
 import tempfile, shutil, urllib.request, urllib.parse, urllib.error, io, sys, subprocess
 import unittest
@@ -107,7 +108,7 @@ class TestCollect (unittest.TestCase):
              mock.patch('shutil.move') as move, \
              mock.patch('shutil.rmtree') as rmtree, \
              mock.patch('tempfile.mkdtemp') as mkdtemp, \
-             mock.patch('urllib.urlopen') as urlopen, \
+             mock.patch('urllib.request.urlopen') as urlopen, \
              mock.patch('subprocess.check_call') as check_call:
 
             mkdtemp.return_value = '/tmp'
@@ -136,7 +137,7 @@ class TestCollect (unittest.TestCase):
              mock.patch('shutil.move') as move, \
              mock.patch('shutil.rmtree') as rmtree, \
              mock.patch('tempfile.mkdtemp') as mkdtemp, \
-             mock.patch('urllib.urlopen') as urlopen, \
+             mock.patch('urllib.request.urlopen') as urlopen, \
              mock.patch('subprocess.check_call') as check_call:
 
             mkdtemp.return_value = '/tmp'
@@ -184,7 +185,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.testing:
-        import mock # To run tests, `pip install mock==2.0.0`
         suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
         result = unittest.TextTestRunner(verbosity=2).run(suite)
         exit(0 if result.wasSuccessful() else 1)
