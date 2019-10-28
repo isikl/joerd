@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from .config import make_config_from_argparse
+from joerd.config import make_config_from_argparse
 from osgeo import gdal
 from joerd.server import Server
 from joerd.plugin import plugin
@@ -22,7 +22,7 @@ def _make_queue(j, config):
     parameter of the configuration.
     """
     typ = config['type']
-    create_fn = plugin('queue', typ, 'create')
+    create_fn = plugin('sqs_queue', typ, 'create')
     return create_fn(j, config)
 
 
@@ -284,3 +284,8 @@ def joerd_main(argv=None):
     gdal.UseExceptions()
 
     args.func(cfg)
+
+
+# For debugging the joerd command this script in your debugger
+if __name__ == '__main__':
+    joerd_main()

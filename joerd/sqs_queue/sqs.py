@@ -62,7 +62,7 @@ class Batch(object):
             self.batch_count = 0
 
 
-class Queue(object):
+class SQSQueue(object):
     """
     A queue which uses SQS behind the scenes to send and receive messages.
 
@@ -118,4 +118,4 @@ class Queue(object):
 
 
 def create(j, cfg):
-    return Queue(cfg)
+    return SQSQueue(cfg)

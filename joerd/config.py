@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from builtins import object
-from yaml import load
+from yaml import load, FullLoader
 from .util import BoundingBox
 from joerd.region import Region
 import copy
@@ -91,6 +91,6 @@ def make_config_from_argparse(config, opencfg=open):
     # opencfg for testing
     cfg = default_yml_config()
     with opencfg(config.config) as config_fp:
-        yml_data = load(config_fp.read())
+        yml_data = load(config_fp.read(), Loader=FullLoader)
         cfg = merge_cfg(cfg, yml_data)
     return Configuration(cfg)
